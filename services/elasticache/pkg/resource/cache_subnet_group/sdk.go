@@ -133,6 +133,7 @@ func (rm *resourceManager) sdkCreate(
 	ctx context.Context,
 	r *resource,
 ) (*resource, error) {
+
 	input, err := rm.newCreateRequestPayload(r)
 	if err != nil {
 		return nil, err

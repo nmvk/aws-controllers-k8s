@@ -1,4 +1,8 @@
 resources:
+  Snapshot:
+    additional_spec:
+      CopySnapshot:
+        - SourceSnapshotName
 operations:
   ModifyReplicationGroup:
     override_values:

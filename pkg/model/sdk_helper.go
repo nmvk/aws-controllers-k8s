@@ -164,6 +164,21 @@ func (a *SDKAPI) GetOperationMap() *OperationMap {
 	return &opMap
 }
 
+// Given an API operation and member of API operation, return shape reference associated with the member
+func (a *SDKAPI) GetMemberShapeRef(operation string, memberName string) (bool, *awssdkmodel.ShapeRef) {
+	for opID, op := range a.API.Operations {
+		if opID == operation && op.InputRef.Shape != nil {
+			for opMemberName, memberShapeRef := range op.InputRef.Shape.MemberRefs {
+				if opMemberName == memberName {
+					return true, memberShapeRef
+				}
+			}
+		}
+	}
+
+	return false, nil
+}
+
 // CRDNames returns a slice of names structs for all top-level resources in the
 // API
 func (a *SDKAPI) CRDNames(cfg *ackgenconfig.Config) []names.Names {
@@ -233,8 +248,8 @@ func (a *SDKAPI) HasConflictingTypeName(typeName string, cfg *ackgenconfig.Confi
 		crdStatusNames = append(crdStatusNames, cleanResourceName+"Status")
 	}
 	return util.InStrings(cleanTypeName, crdResourceNames) ||
-			util.InStrings(cleanTypeName, crdSpecNames) ||
-			util.InStrings(cleanTypeName, crdStatusNames)
+		util.InStrings(cleanTypeName, crdSpecNames) ||
+		util.InStrings(cleanTypeName, crdStatusNames)
 }
 
 // ServiceID returns the exact `metadata.serviceId` attribute for the AWS

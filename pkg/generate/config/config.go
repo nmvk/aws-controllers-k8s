@@ -105,6 +105,9 @@ type ResourceConfig struct {
 	// `resourceManager` struct that will set Conditions on a `resource` struct
 	// depending on the status of the resource.
 	UpdateConditionsCustomMethodName string `json:"update_conditions_custom_method_name,omitempty"`
+	// Additional spec fields that are required for the resources. These can be other operation
+	// and the member name of those operations.
+	AdditionalSpec map[string]*[]string `json:"additional_spec"`
 }
 
 // UnpackAttributesMapConfig informs the code generator that the API follows a
@@ -313,6 +316,19 @@ func (c *Config) OverrideValues(operationName string) (map[string]string, bool) 
 		return nil, false
 	}
 	return oConfig.OverrideValues, ok
+}
+
+// AdditionSpec gives map of operation and their MemberFields to
+// add to spec.
+func (c *Config) AdditionalSpec(resourceName string) (map[string]*[]string, bool) {
+	if c == nil {
+		return nil, false
+	}
+	resourceConfig, ok := c.Resources[resourceName]
+	if !ok {
+		return nil, false
+	}
+	return resourceConfig.AdditionalSpec, ok
 }
 
 // IsIgnoredResource returns true if Operation Name is configured to be ignored
