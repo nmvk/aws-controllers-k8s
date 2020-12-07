@@ -14,6 +14,7 @@
 package types
 
 import (
+	"context"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	ctrlrt "sigs.k8s.io/controller-runtime"
@@ -40,5 +41,5 @@ type AWSResourceReconciler interface {
 	BindControllerManager(ctrlrt.Manager) error
 	// SecretValueFromReference fetches the value of a Secret given a
 	// SecretReference
-	SecretValueFromReference(*corev1.SecretReference) (string, error)
+	SecretValueFromReference(context.Context, *corev1.SecretReference) (string, error)
 }

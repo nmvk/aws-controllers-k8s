@@ -46,6 +46,7 @@ func (rm *resourceManager) sdkFind(
 	ctx context.Context,
 	r *resource,
 ) (*resource, error) {
+	rm.rr.SecretValueFromReference(ctx, nil)
 	input, err := rm.newListRequestPayload(r)
 	if err != nil {
 		return nil, err

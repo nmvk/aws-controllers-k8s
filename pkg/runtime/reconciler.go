@@ -43,13 +43,14 @@ import (
 // controller-runtime.Controller objects (each containing a single reconciler
 // object)s and sharing watch and informer queues across those controllers.
 type reconciler struct {
-	kc      client.Client
-	rmf     acktypes.AWSResourceManagerFactory
-	rd      acktypes.AWSResourceDescriptor
-	log     logr.Logger
-	cfg     ackcfg.Config
-	cache   ackrtcache.Caches
-	metrics *ackmetrics.Metrics
+	kc        client.Client
+	rmf       acktypes.AWSResourceManagerFactory
+	rd        acktypes.AWSResourceDescriptor
+	log       logr.Logger
+	cfg       ackcfg.Config
+	cache     ackrtcache.Caches
+	metrics   *ackmetrics.Metrics
+	clientSet kubernetes.Clientset
 }
 
 // GroupKind returns the string containing the API group and kind reconciled by
@@ -73,6 +74,7 @@ func (r *reconciler) BindControllerManager(mgr ctrlrt.Manager) error {
 		return err
 	}
 	r.kc = mgr.GetClient()
+	r.clientSet = *clientset
 	r.cache = ackrtcache.New(clientset, r.log)
 	r.cache.Run()
 	rd := r.rmf.ResourceDescriptor()
@@ -85,11 +87,17 @@ func (r *reconciler) BindControllerManager(mgr ctrlrt.Manager) error {
 
 // SecretValueFromReference fetches the value of a Secret given a
 // SecretReference
-func (r *reconciler) SecretValueFromReference(
+func (r *reconciler) SecretValueFromReference(ctx context.Context,
 	ref *corev1.SecretReference,
 ) (string, error) {
-	// TODO(alina-kim): Implement this method :)
-	return "", ackerr.NotImplemented
+	secret, err := r.clientSet.CoreV1().Secrets("default").Get(ctx, "token", metav1.GetOptions{})
+
+	if err != nil {
+		return "", err
+	}
+
+	print(secret.Type)
+	return "stra", nil
 }
 
 // Reconcile implements `controller-runtime.Reconciler` and handles reconciling

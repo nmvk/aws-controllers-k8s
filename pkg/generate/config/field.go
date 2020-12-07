@@ -136,6 +136,9 @@ type FieldConfig struct {
 	// that owns the resource. This is a special field that we direct to
 	// storage in the common `Status.ACKResourceMetadata.OwnerAccountID` field.
 	IsOwnerAccountID bool `json:"is_owner_account_id"`
+	// IsSecret indicates if the field is secret and needs to be replaced by
+	// k8 secret ref
+	IsSecret bool `json:is_secret`
 	// From instructs the code generator that the value of the field should
 	// be retrieved from the specified operation and member path
 	From *SourceFieldConfig `json:"from,omitempty"`

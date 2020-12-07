@@ -54,6 +54,8 @@ type Caches struct {
 
 	// Namespaces cache
 	Namespaces *NamespaceCache
+
+	Secrets *SecretsCache
 }
 
 // New creates a new Caches object from a kubernetes.Interface and
@@ -62,6 +64,7 @@ func New(clientset kubernetes.Interface, log logr.Logger) Caches {
 	return Caches{
 		Accounts:   NewAccountCache(clientset, log),
 		Namespaces: NewNamespaceCache(clientset, log),
+		Secrets:    NewSecretsCache(clientset, log),
 	}
 }
 
@@ -73,6 +76,9 @@ func (c Caches) Run() {
 	}
 	if c.Namespaces != nil {
 		c.Namespaces.Run(stopCh)
+	}
+	if c.Secrets != nil {
+		c.Secrets.Run(stopCh)
 	}
 	c.stopCh = stopCh
 }
